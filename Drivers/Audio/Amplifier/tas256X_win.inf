@@ -1,0 +1,58 @@
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Media
+ClassGuid   = {4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider    = %ManufacturerName%
+CatalogFile = tas256X_win.cat
+DriverVer = 06/01/2025,16.32.53.97
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+tas256X_win.sys  = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName% = Standard,NTARM64.10.0...16299 ; %13% support introduced in build 16299
+
+[Standard.NTARM64.10.0...16299]
+%tas256X_win.DeviceDesc% = tas256X_win_Device, ACPI\TAS256X
+
+[tas256X_win_Device.NT]
+CopyFiles = File_Copy
+
+[File_Copy]
+tas256X_win.sys
+
+;-------------- Service installation
+[tas256X_win_Device.NT.Services]
+AddService = tas256X_win,%SPSVCINST_ASSOCSERVICE%, tas256X_win_Service_Inst
+
+; -------------- tas256X_win driver install sections
+[tas256X_win_Service_Inst]
+DisplayName    = %tas256X_win.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\tas256X_win.sys
+
+[tas256X_win_Device.NT.Wdf]
+KmdfService = tas256X_win, tas256X_win_wdfsect
+
+[tas256X_win_wdfsect]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ManufacturerName = "Nikroks & Remtrik"
+DiskName = "Texas Instruments TAS256X Audio Amplifier Installation Disk"
+tas256X_win.DeviceDesc = "Ti TAS256X Audio Amplifier Device"
+tas256X_win.SVCDESC = "Ti TAS256X Service"
